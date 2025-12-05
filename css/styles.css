@@ -1,0 +1,337 @@
+/* Custom styles for Chicago Freeway Cap Analysis Tool */
+
+/* Map container styles */
+#map {
+    cursor: grab;
+}
+
+#map:active {
+    cursor: grabbing;
+}
+
+/* Sidebar transition effects */
+#sidebar.expanded {
+    width: 100vw;
+}
+
+/* Tab styles */
+.tab-active {
+    @apply text-blue-600 bg-blue-50 border-b-2 border-blue-600;
+}
+
+.tab-inactive {
+    @apply text-gray-600 bg-gray-50 hover:bg-gray-100;
+}
+
+/* Dataset item styles */
+.dataset-item {
+    @apply flex items-center space-x-2 p-2 rounded hover:bg-gray-50 cursor-pointer transition-colors;
+}
+
+.dataset-item input[type="checkbox"] {
+    @apply w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2;
+}
+
+.dataset-item.active {
+    @apply bg-blue-50 border-blue-200;
+}
+
+.dataset-item.loading {
+    @apply opacity-50;
+}
+
+.dataset-item.error {
+    @apply text-red-600;
+}
+
+/* Mapbox popup customization */
+.mapboxgl-popup-content {
+    @apply rounded-lg shadow-lg border border-gray-200;
+    max-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.mapboxgl-popup-close-button {
+    @apply text-gray-500 hover:text-gray-700;
+    font-size: 20px;
+    padding: 4px 8px;
+}
+
+/* Custom popup content */
+.popup-header {
+    @apply font-semibold text-gray-800 mb-2 pb-2 border-b border-gray-200;
+}
+
+.popup-property {
+    @apply flex justify-between py-1 text-sm;
+}
+
+.popup-property-name {
+    @apply font-medium text-gray-600;
+}
+
+.popup-property-value {
+    @apply text-gray-800;
+}
+
+/* Slider customization */
+input[type="range"] {
+    @apply appearance-none bg-gray-200 h-2 rounded-lg outline-none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-4 h-4 bg-blue-600 rounded-full cursor-pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    @apply w-4 h-4 bg-blue-600 rounded-full cursor-pointer border-0;
+}
+
+/* Results list styles */
+.result-item {
+    @apply p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer transition-colors;
+}
+
+.result-item.selected {
+    @apply bg-blue-50 border-blue-300;
+}
+
+.result-score {
+    @apply text-lg font-bold text-green-600;
+}
+
+.result-rank {
+    @apply text-sm text-gray-500;
+}
+
+/* Feature score bars */
+.feature-score-bar {
+    @apply flex items-center space-x-2 mb-2;
+}
+
+.feature-score-fill {
+    @apply bg-blue-500 h-2 rounded;
+}
+
+.feature-score-label {
+    @apply text-xs text-gray-600 w-24 text-right;
+}
+
+.feature-score-value {
+    @apply text-xs font-medium text-gray-800 w-8;
+}
+
+/* Analysis animation */
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.analysis-highlight {
+    animation: pulse-glow 0.8s ease-in-out;
+}
+
+/* Custom scrollbar */
+#sidebar::-webkit-scrollbar,
+#right-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#sidebar::-webkit-scrollbar-track,
+#right-panel::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+}
+
+#sidebar::-webkit-scrollbar-thumb,
+#right-panel::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover,
+#right-panel::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+}
+
+/* Hide scrollbars for left panel content areas while maintaining scroll functionality */
+#explore-content::-webkit-scrollbar,
+#analyze-content::-webkit-scrollbar,
+#results-content::-webkit-scrollbar {
+    display: none;
+}
+
+#explore-content,
+#analyze-content,
+#results-content {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 100vw;
+    }
+
+    #right-panel {
+        width: 100vw;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 50;
+        height: 100vh;
+    }
+}
+
+/* Utility classes */
+.loading-spinner {
+    @apply animate-spin rounded-full border-b-2 border-current;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* 3D building styles for map */
+.mapboxgl-map .mapbox-gl-building {
+    fill-extrusion-color: #aaa;
+    fill-extrusion-height: ['get', 'height'];
+    fill-extrusion-base: ['get', 'min_height'];
+    fill-extrusion-opacity: 0.8;
+}
+
+/* Highway buffer styles */
+.highway-buffer {
+    fill-opacity: 0.2;
+    stroke-opacity: 0.6;
+    stroke-width: 2;
+}
+
+/* Segment visualization styles */
+.freeway-segment {
+    stroke-width: 1;
+    stroke: #333;
+    fill-opacity: 0.8;
+}
+
+.freeway-segment.highlighted {
+    stroke-width: 2;
+    stroke: #fff;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+}
+
+/* Scenario button styles */
+.scenario-btn {
+    @apply bg-white border-gray-300 text-gray-600;
+    transition: all 0.2s ease-in-out;
+}
+
+.scenario-btn:hover {
+    @apply bg-gray-50 border-gray-400;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.scenario-btn.active {
+    @apply bg-blue-600 border-blue-600 text-white;
+    box-shadow: 0 3px 8px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.scenario-btn.active:hover {
+    @apply bg-blue-700 border-blue-700;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+}
+
+/* Results view button styles - same as scenario buttons */
+.results-view-btn {
+    @apply bg-white border-gray-300 text-gray-600;
+    transition: all 0.2s ease-in-out;
+}
+
+.results-view-btn:hover {
+    @apply bg-gray-50 border-gray-400;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.results-view-btn.active {
+    @apply bg-blue-600 border-blue-600 text-white;
+    box-shadow: 0 3px 8px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+.results-view-btn.active:hover {
+    @apply bg-blue-700 border-blue-700;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+}
+
+/* Screenshot mode - horizontal paper aspect ratio (11:8.5) */
+body:has(#app.screenshot-mode) {
+    @apply bg-gray-800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#app.screenshot-mode {
+    /* Use 95% of viewport and maintain 11:8.5 aspect ratio */
+    /* Try height-based sizing first for better screen utilization */
+    height: 95vh;
+    width: calc(95vh * 11 / 8.5);
+    /* If width exceeds viewport, switch to width-based sizing */
+    max-width: 95vw;
+    max-height: calc(95vw * 8.5 / 11);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Minimap styles */
+#minimap-container {
+    @apply relative bg-gray-50;
+    min-height: 192px; /* h-48 = 12rem = 192px */
+}
+
+#minimap-container .mapboxgl-canvas {
+    @apply rounded;
+}
+
+/* Hide minimap controls for cleaner look */
+#minimap-container .mapboxgl-control-container {
+    display: none;
+}
+
+/* Pulsing animation for selected segment in minimap */
+@keyframes minimap-pulse {
+    0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+    }
+    50% {
+        opacity: 0.9;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1));
+    }
+}
+
+.minimap-selected-segment {
+    animation: minimap-pulse 2s ease-in-out infinite;
+}

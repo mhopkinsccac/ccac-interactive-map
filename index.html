@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicago Freeway Cap Analysis Tool</title>
+
+    <!-- Mapbox GL JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- Turf.js for geospatial operations -->
+    <script src='https://unpkg.com/@turf/turf@6.5.0/turf.min.js'></script>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="m-0 p-0 h-screen overflow-hidden bg-gray-100">
+    <div id="app" class="h-full flex">
+        <!-- Left Sidebar -->
+        <div id="sidebar" class="w-80 bg-white border-r border-gray-300 flex flex-col overflow-hidden transition-all duration-300 ease-in-out">
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-gray-200">
+                <button id="explore-tab" class="flex-1 px-4 py-3 text-sm font-medium text-blue-600 bg-blue-50 border-b-2 border-blue-600 hover:bg-blue-100 transition-colors" data-tab="explore">
+                    Explore
+                </button>
+                <button id="analyze-tab" class="flex-1 px-4 py-3 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors" data-tab="analyze">
+                    Analyze
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="flex-1 overflow-hidden">
+                <!-- Explore Tab Content -->
+                <div id="explore-content" class="h-full overflow-y-auto">
+
+                    <!-- Map Controls Info -->
+                    <div class="p-4 pb-0">
+                        <div class="flex items-start gap-1 mb-3 text-xs italic text-gray-500">
+                            <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Click the map. Press R to rotate, P to change pitch, and S for screenshot mode.</span>
+                        </div>
+                    </div>
+
+                    <!-- Dataset List -->
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Datasets</h3>
+                        <div id="dataset-list" class="space-y-1">
+                            <!-- Datasets will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analyze Tab Content (Preferences) -->
+                <div id="analyze-content" class="h-full overflow-y-auto hidden">
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-4">Analysis Preferences</h3>
+
+                        <!-- Default Values Section -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Default Values</label>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <button id="scenario-best-overall"
+                                        class="scenario-btn px-3 py-1.5 text-xs font-medium rounded border transition-colors active"
+                                        data-scenario="best-overall">
+                                    Best Overall
+                                </button>
+                                <button id="scenario-equity"
+                                        class="scenario-btn px-3 py-1.5 text-xs font-medium rounded border transition-colors"
+                                        data-scenario="equity">
+                                    Scenario 1: Equity
+                                </button>
+                                <button id="scenario-cap-ready"
+                                        class="scenario-btn px-3 py-1.5 text-xs font-medium rounded border transition-colors"
+                                        data-scenario="cap-ready">
+                                    Scenario 2: Cap-Ready
+                                </button>
+                                <button id="scenario-transit"
+                                        class="scenario-btn px-3 py-1.5 text-xs font-medium rounded border transition-colors"
+                                        data-scenario="transit">
+                                    Scenario 3: Transit-Oriented
+                                </button>
+                                <button id="scenario-safe-routes"
+                                        class="scenario-btn px-3 py-1.5 text-xs font-medium rounded border transition-colors"
+                                        data-scenario="safe-routes">
+                                    Scenario 4: Safe Routes
+                                </button>
+                            </div>
+                            <div id="scenario-info-box" class="p-3 text-xs text-gray-700 bg-blue-50 border border-blue-200 rounded">
+                                Results from a survey on desirable traits, answered by CCAC staff.
+                            </div>
+                        </div>
+
+                        <!-- Requirements Section -->
+                        <div class="mb-6">
+                            <h4 class="text-xs font-medium text-gray-600 uppercase tracking-wide mb-3">Requirements</h4>
+
+                            <!-- Segment Length -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Segment Length (ft)</label>
+                                <input type="number" id="segment-length" min="100" max="1500" step="50" value="300"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Freeway Selection -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Freeway Selection</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="pref-i90" checked class="mr-2">
+                                        <span class="text-sm">I-90/94 Kennedy</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="pref-i290" checked class="mr-2">
+                                        <span class="text-sm">I-290 Eisenhower</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="pref-i55" checked class="mr-2">
+                                        <span class="text-sm">I-55 Stevenson</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="pref-i90-dan-ryan" checked class="mr-2">
+                                        <span class="text-sm">I-90/94 Dan Ryan</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="pref-i57" checked class="mr-2">
+                                        <span class="text-sm">I-57 (incl. Bishop Ford)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Station-Proximity Gate (Rail) -->
+                            <div class="mb-4">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <input type="checkbox" id="station-gate-enabled" class="mr-2">
+                                    <label class="text-sm font-medium text-gray-700">Station-Proximity Gate (Rail)</label>
+                                </div>
+                                <div id="station-gate-controls" class="ml-6 space-y-2 opacity-50 pointer-events-none">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs text-gray-500">Max Distance:</span>
+                                        <input type="number" id="station-gate-distance" min="0.25" max="1.0" step="0.05" value="0.5"
+                                               class="w-20 px-2 py-1 text-xs border border-gray-300 rounded">
+                                        <span class="text-xs text-gray-500">miles</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500">Excludes segments farther than this distance from all CTA, Metra, and Amtrak stations</div>
+                                </div>
+                            </div>
+
+                            <!-- Neighborhood Filter -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Neighborhood Filter</label>
+                                <div>
+                                    <label class="text-xs text-gray-500 mb-1 block">Select Neighborhoods:</label>
+                                    <select id="neighborhood-filter" multiple size="4" class="w-full text-xs border border-gray-300 rounded">
+                                        <!-- Options will be populated by JavaScript -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Zoning Allowlist -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Zoning Allowlist</label>
+                                <div class="space-y-1">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-residential" checked class="mr-2">
+                                        <span class="text-xs">Residential (RS, RT, RM)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-business" checked class="mr-2">
+                                        <span class="text-xs">Business (B1, B2, B3)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-commercial" checked class="mr-2">
+                                        <span class="text-xs">Commercial (C1, C2, C3)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-downtown" checked class="mr-2">
+                                        <span class="text-xs">Downtown (DC, DR, DS, DX)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-industrial" checked class="mr-2">
+                                        <span class="text-xs">Industrial (M1, M2, M3)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-planned" checked class="mr-2">
+                                        <span class="text-xs">Planned Development (PD, PMD)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="zoning-other" checked class="mr-2">
+                                        <span class="text-xs">Other (POS, T)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Funding Alignment Gates -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Funding Alignment Gates</label>
+                                <div class="space-y-1">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="require-ssa" class="mr-2">
+                                        <span class="text-xs">Require inside Special Service Area (SSA)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="require-tif" class="mr-2">
+                                        <span class="text-xs">Require inside Tax Increment Financing (TIF) District</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Bridge Condition Gate -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bridge Condition Gate</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="require-bridge-condition" class="mr-2">
+                                        <span class="text-xs">Exclude segments near old bridges</span>
+                                    </label>
+                                    <div class="ml-6" id="bridge-age-controls" style="display: none;">
+                                        <label class="block text-xs text-gray-600 mb-1">Maximum bridge age (years):</label>
+                                        <input type="number" id="bridge-age-threshold"
+                                               class="w-full px-2 py-1 text-xs border border-gray-300 rounded"
+                                               min="1" max="150" value="80" step="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prioritizable Features Section -->
+                        <div class="mb-6">
+                            <h4 class="text-xs font-medium text-gray-600 uppercase tracking-wide mb-3">Prioritizable Features</h4>
+
+                            <!-- CTA Rail Stations -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to CTA Rail Stations</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="cta-weight" min="0" max="10" value="9"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="cta-weight-value" class="text-sm font-medium text-gray-700 w-6">9</span>
+                                </div>
+                            </div>
+
+                            <!-- Metra Stations -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Metra Stations</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="metra-stations-weight" min="0" max="10" value="8"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="metra-stations-weight-value" class="text-sm font-medium text-gray-700 w-6">8</span>
+                                </div>
+                            </div>
+
+                            <!-- Amtrak Stations -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Amtrak Train Stations</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="amtrak-stations-weight" min="0" max="10" value="7"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="amtrak-stations-weight-value" class="text-sm font-medium text-gray-700 w-6">7</span>
+                                </div>
+                            </div>
+
+                            <!-- Parks -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Parks</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="parks-weight" min="0" max="10" value="6"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="parks-weight-value" class="text-sm font-medium text-gray-700 w-6">6</span>
+                                </div>
+                            </div>
+
+                            <!-- Public Schools -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Public Schools</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="public-schools-weight" min="0" max="10" value="4"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="public-schools-weight-value" class="text-sm font-medium text-gray-700 w-6">4</span>
+                                </div>
+                            </div>
+
+                            <!-- Private Schools -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Private Schools</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="private-schools-weight" min="0" max="10" value="4"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="private-schools-weight-value" class="text-sm font-medium text-gray-700 w-6">4</span>
+                                </div>
+                            </div>
+
+                            <!-- Colleges and Universities -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Colleges and Universities</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="colleges-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="colleges-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Hospitals -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Hospitals</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="hospitals-weight" min="0" max="10" value="4"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="hospitals-weight-value" class="text-sm font-medium text-gray-700 w-6">4</span>
+                                </div>
+                            </div>
+
+                            <!-- Landmarks -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Landmarks</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="landmarks-weight" min="0" max="10" value="2"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="landmarks-weight-value" class="text-sm font-medium text-gray-700 w-6">2</span>
+                                </div>
+                            </div>
+
+                            <!-- Stadiums -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Stadiums</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="stadiums-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="stadiums-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Special Service Areas -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Special Service Areas</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="ssa-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="ssa-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                            </div>
+
+                            <!-- TIF Districts -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to TIF Districts</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="tif-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="tif-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Medical District -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Medical District</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="medical-district-weight" min="0" max="10" value="4"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="medical-district-weight-value" class="text-sm font-medium text-gray-700 w-6">4</span>
+                                </div>
+                            </div>
+
+                            <!-- Neighborhood Center -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Neighborhood Center</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="neighborhood-center-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="neighborhood-center-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                                <div class="mt-2 text-xs text-gray-500">For identifying segments which cut neighborhoods in half</div>
+                            </div>
+
+                            <!-- Bridges -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Proximity to Existing Bridges</label>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="bridges-weight" min="0" max="10" value="9"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="bridges-weight-value" class="text-sm font-medium text-gray-700 w-6">9</span>
+                                </div>
+                            </div>
+
+                            <!-- ADI of Block Group -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Area Deprivation Index of Block Group</label>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="adi-weight" min="0" max="10" value="8"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="adi-weight-value" class="text-sm font-medium text-gray-700 w-6">8</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Direction:</span>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="adi-direction" value="higher" id="adi-higher" checked>
+                                        <span class="text-xs">Higher is better</span>
+                                    </label>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="adi-direction" value="lower" id="adi-lower">
+                                        <span class="text-xs">Lower is better</span>
+                                    </label>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Higher ADI = more socioeconomically disadvantaged</div>
+                            </div>
+
+                            <!-- Crash Frequency -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Crash Frequency of Block Group</label>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="crashes-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="crashes-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Direction:</span>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="crashes-direction" value="lower" id="crashes-lower" checked>
+                                        <span class="text-xs">Lower is better</span>
+                                    </label>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="crashes-direction" value="higher" id="crashes-higher">
+                                        <span class="text-xs">Higher is better</span>
+                                    </label>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Lower = safer area, Higher = more improvement potential</div>
+                            </div>
+
+                            <!-- Transit Stop Density (Bus) -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Transit Stop Density (Bus)</label>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="transit-density-weight" min="0" max="10" value="7"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="transit-density-weight-value" class="text-sm font-medium text-gray-700 w-6">7</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Direction:</span>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="transit-density-direction" value="higher" id="transit-density-higher" checked>
+                                        <span class="text-xs">Higher is better</span>
+                                    </label>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="transit-density-direction" value="lower" id="transit-density-lower">
+                                        <span class="text-xs">Lower is better</span>
+                                    </label>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Number of CTA and Pace bus stops within 0.25 miles</div>
+                            </div>
+
+                            <!-- Bike Network Connectivity -->
+                            <div class="mb-4 p-3 border border-gray-200 rounded">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Bike Network Connectivity</label>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="text-xs text-gray-500">Weight:</span>
+                                    <input type="range" id="bike-network-weight" min="0" max="10" value="5"
+                                           class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <span id="bike-network-weight-value" class="text-sm font-medium text-gray-700 w-6">5</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-gray-500">Direction:</span>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="bike-network-direction" value="higher" id="bike-network-higher" checked>
+                                        <span class="text-xs">Higher is better</span>
+                                    </label>
+                                    <label class="flex items-center space-x-1">
+                                        <input type="radio" name="bike-network-direction" value="lower" id="bike-network-lower">
+                                        <span class="text-xs">Lower is better</span>
+                                    </label>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">Total bike route mileage within 0.25 miles</div>
+                            </div>
+                        </div>
+
+                        <!-- Initiate Analysis Button -->
+                        <button id="initiate-analysis" class="w-full px-4 py-3 bg-green-600 text-white font-medium rounded hover:bg-green-700 transition-colors">
+                            Initiate Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analysis Progress (Hidden by default) -->
+                <div id="analysis-progress" class="h-full overflow-y-auto hidden">
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-4">Analysis in Progress</h3>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Analyzing segments</span>
+                                <span id="progress-percentage">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Current Analysis Info -->
+                        <div id="current-analysis" class="text-sm text-gray-600">
+                            Ready to begin analysis...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results View (Hidden by default) -->
+                <div id="results-content" class="h-full overflow-y-auto hidden">
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-semibold text-gray-700">Analysis Results</h3>
+                            <button id="update-preferences" class="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700">
+                                Update Preferences
+                            </button>
+                        </div>
+
+                        <div id="results-list" class="space-y-2">
+                            <!-- Results will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div id="map-container" class="flex-1 relative">
+            <div id="map" class="w-full h-full"></div>
+        </div>
+
+        <!-- Right Detail Panel (Hidden by default) -->
+        <div id="right-panel" class="w-60 bg-white border-l border-gray-300 hidden flex flex-col">
+            <div class="p-4 flex-shrink-0">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-semibold text-gray-700">Segment Details</h3>
+                    <button id="close-right-panel" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="segment-details" class="flex-1 flex flex-col overflow-y-auto px-4 pb-4">
+                <!-- Segment details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <div class="flex items-center justify-center mb-4">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+            <div id="loading-text" class="text-center text-gray-700">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

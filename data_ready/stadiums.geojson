@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "stadiums",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "Guaranteed Rate Field", "address": "333 W 35th St, Chicago, IL 60616", "source_id": "stadiums", "friendly_name": "Stadiums", "geometry_type": "Point" }, "geometry": { "type": "Point", "coordinates": [ -87.6338, 41.8299 ] } },
+{ "type": "Feature", "properties": { "name": "Wintrust Arena", "address": "200 E Cermak Rd, Chicago, IL 60616", "source_id": "stadiums", "friendly_name": "Stadiums", "geometry_type": "Point" }, "geometry": { "type": "Point", "coordinates": [ -87.6216, 41.8527 ] } },
+{ "type": "Feature", "properties": { "name": "Soldier Field", "address": "Soldier Field, 1410 Special Olympics Dr, Chicago, IL 60605", "source_id": "stadiums", "friendly_name": "Stadiums", "geometry_type": "Point" }, "geometry": { "type": "Point", "coordinates": [ -87.6166, 41.8625 ] } },
+{ "type": "Feature", "properties": { "name": "United Center", "address": "1901 W Madison St, Chicago, IL 60612", "source_id": "stadiums", "friendly_name": "Stadiums", "geometry_type": "Point" }, "geometry": { "type": "Point", "coordinates": [ -87.6742, 41.8807 ] } },
+{ "type": "Feature", "properties": { "name": "Wrigley Field", "address": "1060 W Addison St, Chicago, IL 60613", "source_id": "stadiums", "friendly_name": "Stadiums", "geometry_type": "Point" }, "geometry": { "type": "Point", "coordinates": [ -87.6553, 41.9484 ] } }
+]
+}

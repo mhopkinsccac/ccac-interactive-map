@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "medical_district",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { ":id": "row-gr63_wzk3~bzyw", ":version": "rv-qfmq_vwwv.hr6v", ":created_at": "2024-12-27T16:58:31.023Z", ":updated_at": "2024-12-27T16:58:31.023Z", "case_numbe": "0", "case_type": null, "zoning_id": "66", "zone_type": "5", "zone_class": "PD 30", "edit_statu": null, "create_dat": "2021-10-21T00:00:00", "create_uid": "FKHALIQUE", "edit_date": "2023-10-03T00:00:00", "edit_uid": "DATA_ADMIN", "pd_prefix": null, "pd_num": "30", "comments": null, "ordinance": "A8728", "ordinance_1": "2021-10-14T00:00:00", "zoning_rel": null, "shape_area": "21334363.2033", "shape_len": "19650.3013537", "pedstreet_": null, "objectid": "1923420", "globalid": "{2348A8D4-73FA-458E-A6B6-AAE0A17B49F5}", "pmd_sub_ar": null, "override_c": null, "override_r": "0", "clerk_url": { "url": "https://chicityclerkelms.chicago.gov/Matter/?matterId=E5803FAF-E10D-ED11-82E3-001DD80698CB" }, "clerk_docn": "O2019-1502", "source_id": "medical_district", "friendly_name": "Illinois Medical District", "geometry_type": "Polygon" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -87.666626353284954, 41.875175552931964 ], [ -87.666232530249744, 41.8609620675741 ], [ -87.668741419961961, 41.860941177399908 ], [ -87.668754424080106, 41.861421750997373 ], [ -87.671194049790728, 41.861389007185707 ], [ -87.671248539723436, 41.863201592233118 ], [ -87.681157792939445, 41.862970969213549 ], [ -87.683503041810383, 41.863423450871672 ], [ -87.683798951417913, 41.874959024119697 ], [ -87.666626353284954, 41.875175552931964 ] ] ] } }
+]
+}

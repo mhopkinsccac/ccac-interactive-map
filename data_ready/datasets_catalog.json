@@ -1,0 +1,339 @@
+[
+  {
+    "key": "chicago_boundary",
+    "friendly_name": "Chicago City Boundaries",
+    "path": "chicago_boundary.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "transparent",
+        "fill-opacity": 0,
+        "fill-outline-color": "#333333"
+      },
+      "layout": {}
+    }
+  },
+  {
+    "key": "cta_rail_stations",
+    "friendly_name": "CTA Rail Stations",
+    "path": "cta_rail_stations.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "metra_stations",
+    "friendly_name": "Metra Stations",
+    "path": "metra_stations.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "amtrak_stations",
+    "friendly_name": "Amtrak Train Stations",
+    "path": "amtrak_stations.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "parks",
+    "friendly_name": "Parks",
+    "path": "parks.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "hospitals",
+    "friendly_name": "Hospitals",
+    "path": "hospitals.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "bike_routes",
+    "friendly_name": "Bike Routes",
+    "path": "bike_routes.geojson",
+    "geometry": "LineString",
+    "default_style": {
+      "layer": "line",
+      "paint": {
+        "line-color": "#1f77b4",
+        "line-width": 2,
+        "line-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "sidewalks",
+    "friendly_name": "Sidewalks",
+    "path": "sidewalks.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "cta_bus_stops",
+    "friendly_name": "CTA Bus Stops",
+    "path": "cta_bus_stops.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "pace_bus_stops",
+    "friendly_name": "Pace Bus Stops",
+    "path": "pace_bus_stops.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "landmarks",
+    "friendly_name": "Individual Landmarks",
+    "path": "landmarks.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "neighborhoods",
+    "friendly_name": "Neighborhoods",
+    "path": "neighborhoods.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "medical_district",
+    "friendly_name": "Illinois Medical District",
+    "path": "medical_district.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "public_schools",
+    "friendly_name": "Chicago Public Schools",
+    "path": "public_schools.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#2ca02c",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "block_groups_with_census",
+    "friendly_name": "Census Block Groups (Demographics)",
+    "path": "block_groups_with_census.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#ff7f0e",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#ff7f0e"
+      }
+    }
+  },
+  {
+    "key": "private_schools",
+    "friendly_name": "Private Schools",
+    "path": "private_schools.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "bridges",
+    "friendly_name": "Bridges",
+    "path": "bridges.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "stadiums",
+    "friendly_name": "Stadiums",
+    "path": "stadiums.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "special_service_areas",
+    "friendly_name": "Special Service Areas",
+    "path": "special_service_areas.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "tif_districts",
+    "friendly_name": "Tax Increment Financing Districts",
+    "path": "tif_districts.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "zoning_districts",
+    "friendly_name": "Zoning Districts",
+    "path": "zoning_districts.geojson",
+    "geometry": "Polygon",
+    "default_style": {
+      "layer": "fill",
+      "paint": {
+        "fill-color": "#1f77b4",
+        "fill-opacity": 0.3,
+        "fill-outline-color": "#1f77b4"
+      }
+    }
+  },
+  {
+    "key": "colleges_universities",
+    "friendly_name": "Colleges and Universities",
+    "path": "colleges_universities.geojson",
+    "geometry": "Point",
+    "default_style": {
+      "layer": "circle",
+      "paint": {
+        "circle-radius": 4,
+        "circle-color": "#1f77b4",
+        "circle-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "freeways",
+    "friendly_name": "Freeway Centerlines",
+    "path": "freeways.geojson",
+    "geometry": "LineString",
+    "default_style": {
+      "layer": "line",
+      "paint": {
+        "line-color": "#1f77b4",
+        "line-width": 2,
+        "line-opacity": 0.8
+      }
+    }
+  },
+  {
+    "key": "freeways",
+    "friendly_name": "Freeway Centerlines",
+    "path": "freeways.geojson",
+    "geometry": "LineString",
+    "default_style": {
+      "layer": "line",
+      "paint": {
+        "line-color": "#1f77b4",
+        "line-width": 2,
+        "line-opacity": 0.8
+      }
+    }
+  }
+]

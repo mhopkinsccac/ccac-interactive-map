@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "amtrak_stations",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "OBJECTID": 123, "StaType": "Station Building (with waiting room)", "StnType": "TRAIN", "ZipCode": "60606", "State": "IL", "City": "Chicago", "Address2": " ", "Address1": "255 South Clinton Street", "Name": "Union Station", "Code": "CHI", "StationName": "Chicago, IL", "StationFacilityName": "Union Station", "StationAliases": "Union Station", "DateModif": "2023-07-30T07:00:00", "lon": -87.641015, "lat": 41.878992, "source_id": "amtrak_stations", "friendly_name": "Amtrak Train Stations", "geometry_type": "Point" }, "geometry": { "type": "Point", "coordinates": [ -87.641014999949206, 41.878991999843898 ] } }
+]
+}
