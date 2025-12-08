@@ -1198,7 +1198,7 @@ class UIController {
     }
 
 async loadGeoJSONData(path) {
-    // Always try the local data_ready/ version first
+    // 1) Try the local data_ready/ version first (keeps all other datasets the same)
     const primaryUrl = `data_ready/${path}`;
 
     try {
@@ -1210,9 +1210,9 @@ async loadGeoJSONData(path) {
     } catch (error) {
         console.warn('Primary data fetch failed for', path, error);
 
-        // Only for the sidewalks dataset, fall back to the big GitHub Release URL
+        // 2) Only for the sidewalks dataset, fall back to the S3 URL
         if (path === 'sidewalks.geojson') {
-            const fallbackUrl = 'https://github.com/mhopkinsccac/ccac-interactive-map/releases/download/v1.0/sidewalks.geojson';
+            const fallbackUrl = 'https://ccac-path-to-cap-data.s3.us-east-2.amazonaws.com/sidewalks.geojson';
 
             console.warn('Trying sidewalks fallback URL:', fallbackUrl);
             const response2 = await fetch(fallbackUrl);
@@ -1222,7 +1222,7 @@ async loadGeoJSONData(path) {
             return await response2.json();
         }
 
-        // For all other datasets, behave like before and surface the error
+        // 3) For all other datasets, behave like before and surface the error
         throw error;
     }
 }
