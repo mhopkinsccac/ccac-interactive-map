@@ -8,7 +8,7 @@ class ChicagoFreewayApp {
         this.mapComponent = null;
         this.stateManager = null;
         this.uiController = null;
-        this.mapboxToken = 'pk.eyJ1IjoibWhvcGtpbnNjY2FjIiwiYSI6ImNtaXQ4Zmc2MDE4c2kzZXB3eXk4NjI4MGIifQ.adxLmbl7wfdizEnaZrujxQ'; // Replace with your Mapbox API key
+        this.mapboxToken = 'pk.eyJ1IjoibWhvcGtpbnNjY2FjIiwiYSI6ImNtaXhwNGgwMDA2dmIzZnB5bXB3ZTdhaHYifQ.V6FRypHMDxE9ztfsZAQafg'; // Replace with your Mapbox API key
         this.screenshotMode = false;
     }
 
