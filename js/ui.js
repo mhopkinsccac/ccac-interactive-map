@@ -1197,13 +1197,35 @@ class UIController {
         }
     }
 
-    async loadGeoJSONData(path) {
-        const response = await fetch(`data_ready/${path}`);
+async loadGeoJSONData(path) {
+    // Always try the local data_ready/ version first
+    const primaryUrl = `data_ready/${path}`;
+
+    try {
+        const response = await fetch(primaryUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return await response.json();
+    } catch (error) {
+        console.warn('Primary data fetch failed for', path, error);
+
+        // Only for the sidewalks dataset, fall back to the big GitHub Release URL
+        if (path === 'sidewalks.geojson') {
+            const fallbackUrl = 'https://github.com/mhopkinsccac/ccac-interactive-map/releases/download/v1.0/sidewalks.geojson';
+
+            console.warn('Trying sidewalks fallback URL:', fallbackUrl);
+            const response2 = await fetch(fallbackUrl);
+            if (!response2.ok) {
+                throw new Error(`Fallback HTTP error! status: ${response2.status}`);
+            }
+            return await response2.json();
+        }
+
+        // For all other datasets, behave like before and surface the error
+        throw error;
     }
+}
 
     determineGeometryType(geojsonData) {
         if (!geojsonData.features || geojsonData.features.length === 0) {
